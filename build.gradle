@@ -1,0 +1,39 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.5.RELEASE'
+	id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.nicky'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	maven { url "http://maven.aliyun.com/nexus/content/groups/public/"}
+}
+
+ext {
+	set('vaadinVersion', "13.0.7")
+}
+
+dependencies {
+	compile 'org.pcap4j:pcap4j-core:1.+'
+	compile 'org.pcap4j:pcap4j-packetfactory-static:1.+'
+	implementation 'com.vaadin:vaadin-spring-boot-starter'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "com.vaadin:vaadin-bom:${vaadinVersion}"
+	}
+}
