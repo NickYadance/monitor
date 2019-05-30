@@ -4,9 +4,9 @@ import com.nicky.monitor.core.IpPacketMonitor;
 import com.nicky.monitor.ui.UiComponent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.listbox.ListBox;
-import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.Getter;
 import lombok.Setter;
 import org.pcap4j.core.PcapAddress;
@@ -18,12 +18,12 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.nicky.monitor.constants.HtmlTag.HTML_BREAK;
+
 
 @org.springframework.stereotype.Component
-public class NifGrid implements UiComponent {
-    private static final int PAGE_SIZE = 10;
-    private static final String HTML_BREAK = "<br>";
-
+@UIScope
+public class NifComboBox implements UiComponent {
     @Setter
     @Getter
     private static class NifDomain {
@@ -33,20 +33,32 @@ public class NifGrid implements UiComponent {
         private List<LinkLayerAddress> linkLayerAddress;
         private List<PcapAddress> address;
 
+        /**
+         * Used to show label in ComboBox selected text field
+         * No html tag combined
+         * @return selected text field label
+         */
+        public String toLabelString(){
+            StringBuilder sb = new StringBuilder();
+            if (this.getId() != null && this.getName() != null) {
+                sb.append("NIF[").append(this.getId()).append("]: ").append(this.getName());
+            }
+            return sb.toString();
+        }
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("<div><pre>");
-            sb.append("NIF[").append(this.getId()).append("]: ").append(this.getName()).append(HTML_BREAK);
-
+            if (this.getId() != null && this.getName() != null) {
+                sb.append("NIF[").append(this.getId()).append("]: ").append(this.getName()).append(HTML_BREAK);
+            }
             if (this.getDescription() != null) {
                 sb.append("      : description: [").append(this.getDescription()).append("]").append(HTML_BREAK);
             }
-
             if (this.getLinkLayerAddress() != null) {
                 this.getLinkLayerAddress().forEach(layerAddress -> sb.append("      : Link layer address: [").append(layerAddress).append("]").append(HTML_BREAK));
             }
-
             if (this.getAddress() != null){
                 this.getAddress().forEach(pcapAddress -> sb.append("      : Net layer address: ").append(HTML_BREAK)
                         .append("            : Address: ").append(pcapAddress.getAddress()).append(HTML_BREAK)
@@ -61,24 +73,30 @@ public class NifGrid implements UiComponent {
 
     @Autowired
     private IpPacketMonitor monitor;
-
-    private ListBox<NifDomain> listBox;
+    private ComboBox<NifDomain> comboBox;
     private List<NifDomain> nifDomains;
 
+    @Override
     @PostConstruct
     public void init(){
         List<PcapNetworkInterface> nifs = monitor.getNifs();
         nifDomains = nifs.stream()
                 .map(this::nifToDomain)
                 .collect(Collectors.toList());
-        listBox = new ListBox<>();
-        listBox.setDataProvider(new ListDataProvider<>(nifDomains));
-        listBox.setRenderer(new ComponentRenderer<>(nifDomain -> new Html(nifDomain.toString())));
+        for (int i = 0; i < nifDomains.size(); i++) {
+            nifDomains.get(i).setId(i);
+        }
+        comboBox = new ComboBox<>();
+        comboBox.setLabel("Choose your network interface");
+        comboBox.setItems(this.nifDomains);
+        comboBox.setRenderer(new ComponentRenderer<>(nifDomain -> new Html(nifDomain.toString())));
+        comboBox.setItemLabelGenerator(NifDomain::toLabelString);
+        comboBox.setWidth("450px");
     }
 
     @Override
     public Component get() {
-        return listBox;
+        return comboBox;
     }
 
     private NifDomain nifToDomain(PcapNetworkInterface networkInterface){
