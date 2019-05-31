@@ -7,7 +7,8 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(value = {
 		"com.nicky.monitor.core",
-		"com.nicky.monitor.ui"
+		"com.nicky.monitor.ui",
+		"com.nicky.monitor.config",
 })
 public class MonitorApplication {
 

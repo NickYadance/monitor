@@ -1,4 +1,4 @@
-package com.nicky.monitor.ui.common;
+package com.nicky.monitor.config;
 
 import com.nicky.monitor.constants.HtmlTag;
 import com.vaadin.flow.component.Html;
