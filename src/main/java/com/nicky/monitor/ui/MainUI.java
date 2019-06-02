@@ -32,6 +32,14 @@ public class MainUI extends VerticalLayout {
     @Qualifier("packetTextGrid")
     private UiComponent packetTextArea;
 
+    @Autowired
+    @Qualifier("portNumberField")
+    private UiComponent portNumberField;
+
+    @Autowired
+    @Qualifier("proxyTextField")
+    private UiComponent proxyTextField;
+
     @PostConstruct
     public void init(){
         add(
@@ -39,7 +47,9 @@ public class MainUI extends VerticalLayout {
                 nifComboBox.get(),
                 nifSubmitButton.get(),
                 packetsListBox.get(),
-                packetTextArea.get()
+                packetTextArea.get(),
+                portNumberField.get(),
+                proxyTextField.get()
         );
     }
 }

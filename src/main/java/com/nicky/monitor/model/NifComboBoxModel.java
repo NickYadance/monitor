@@ -5,13 +5,14 @@ import lombok.Setter;
 import org.pcap4j.core.PcapAddress;
 import org.pcap4j.util.LinkLayerAddress;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static com.nicky.monitor.constants.HtmlTag.HTML_BREAK;
 
 @Setter
 @Getter
-public class NifComboBoxModel {
+public class NifComboBoxModel implements Serializable {
     private Integer id;
     private String name;
     private String description;

@@ -18,12 +18,14 @@ package com.nicky.monitor.model;
 import lombok.Data;
 import org.pcap4j.packet.Packet;
 
+import java.io.Serializable;
+
 /**
  *
  * @author GeorgeKh
  */
 @Data
-public class PacketInfo {
+public class PacketInfo implements Serializable {
 
     private Packet packet = null;
     private String packetHex = null;

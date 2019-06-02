@@ -15,11 +15,14 @@ import java.util.List;
 
 @org.springframework.stereotype.Component
 @UIScope
-@Getter
 public class PacketTextGrid implements UiComponent {
     @Autowired
     private Renderer<String> renderer;
+
+    @Getter
     private Grid<String> grid;
+
+    @Getter
     private List<String> packetText;
 
     @Override

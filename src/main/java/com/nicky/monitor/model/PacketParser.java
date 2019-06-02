@@ -34,6 +34,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -43,7 +44,7 @@ import java.util.concurrent.TimeoutException;
  */
 @Slf4j
 @NoArgsConstructor
-public class PacketParser {
+public class PacketParser implements Serializable {
     private static int total_octetes = 0;
     PacketInfo packetInfo = null;
 

@@ -1,6 +1,6 @@
 package com.nicky.monitor.ui.components;
 
-import com.nicky.monitor.core.IpPacketMonitor;
+import com.nicky.monitor.core.Monitor;
 import com.nicky.monitor.model.NifComboBoxModel;
 import com.nicky.monitor.ui.UiComponent;
 import com.vaadin.flow.component.Component;
@@ -8,6 +8,7 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.spring.annotation.UIScope;
+import lombok.Getter;
 import org.pcap4j.core.PcapNetworkInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,10 +20,12 @@ import java.util.stream.Collectors;
 @org.springframework.stereotype.Component
 @UIScope
 public class NifComboBox implements UiComponent {
-
     @Autowired
-    private IpPacketMonitor monitor;
+    private Monitor monitor;
+
+    @Getter
     private ComboBox<NifComboBoxModel> comboBox;
+
     private List<NifComboBoxModel> nifComboBoxModels;
 
     @Override
