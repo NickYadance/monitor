@@ -39,11 +39,12 @@ public class NifComboBox implements UiComponent {
             nifComboBoxModels.get(i).setId(i);
         }
         comboBox = new ComboBox<>();
+        comboBox.setWidth("450px");
+        comboBox.setMinWidth("450px");
         comboBox.setLabel("Choose your network interface");
         comboBox.setItems(this.nifComboBoxModels);
         comboBox.setRenderer(new ComponentRenderer<>(nifComboBoxModel -> new Html(nifComboBoxModel.toString())));
         comboBox.setItemLabelGenerator(NifComboBoxModel::toLabelString);
-        comboBox.setWidth("450px");
     }
 
     @Override

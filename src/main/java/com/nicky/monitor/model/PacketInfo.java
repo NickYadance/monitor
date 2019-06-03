@@ -45,6 +45,8 @@ public class PacketInfo implements Serializable {
     private String l4Name = null;
     private String l4Hex = null;
     private String l4RawData = null;
+    private String l4SrcPort = null;
+    private String l4DestPort = null;
 
     private boolean vlanPacket = false;
     private long timeStamp;

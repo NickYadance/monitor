@@ -1,6 +1,7 @@
 package com.nicky.monitor.ui;
 
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.router.Route;
@@ -50,16 +51,33 @@ public class MainUI extends VerticalLayout {
     @Autowired
     private EventBridge eventBridge;
 
+    private HorizontalLayout nifFormHLayout;
+    private HorizontalLayout packetInfoHLayout;
+
     @PostConstruct
     public void init(){
-        add(
-                new H1("Bandwidth Monitor"),
-                nifComboBox.get(),
-                nifSubmitButton.get(),
-                packetsListBox.get(),
-                packetTextArea.get(),
+        this.setWidth("800px");
+
+        nifFormHLayout = new HorizontalLayout();
+        nifFormHLayout.setWidthFull();
+        nifFormHLayout.add(
                 portNumberField.get(),
                 proxyTextField.get()
+        );
+
+        packetInfoHLayout = new HorizontalLayout();
+        packetInfoHLayout.setWidthFull();
+        packetInfoHLayout.add(
+                packetsListBox.get(),
+                packetTextArea.get()
+        );
+
+        this.add(
+                new H1("Bandwidth Monitor"),
+                nifComboBox.get(),
+                nifFormHLayout,
+                nifSubmitButton.get(),
+                packetInfoHLayout
         );
     }
 }

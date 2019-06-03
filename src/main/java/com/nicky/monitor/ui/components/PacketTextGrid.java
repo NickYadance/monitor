@@ -33,7 +33,7 @@ public class PacketTextGrid implements UiComponent {
         grid = new Grid<>();
         grid.setWidthFull();
         grid.setDataProvider(DataProvider.ofCollection(this.packetText));
-        grid.addColumn(renderer).setHeader("Ip Packet");
+        grid.addColumn(renderer).setHeader("Packet Info");
     }
 
     @Override

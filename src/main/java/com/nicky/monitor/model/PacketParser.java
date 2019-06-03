@@ -169,6 +169,8 @@ public class PacketParser implements Serializable {
         if (packet.get(TcpPacket.class) != null) {
             packetInfo.setL4Name("TCP");
             packetInfo.setL4Hex(getHeaderOffset(packet.get(TcpPacket.class).getHeader().toHexString().toUpperCase()));
+            packetInfo.setL4SrcPort(String.valueOf(packet.get(TcpPacket.class).getHeader().getSrcPort().valueAsInt()));
+            packetInfo.setL4DestPort(String.valueOf(packet.get(TcpPacket.class).getHeader().getDstPort().valueAsInt()));
             packetInfo.setL4RawData(new String());
             if (packet.get(TcpPacket.class).getPayload() != null) {
                 packetInfo.setPacketPayLoad(getHeaderOffset(spaceHex(Hex.encodeHexString(packet.get(TcpPacket.class).getPayload().getRawData()))));

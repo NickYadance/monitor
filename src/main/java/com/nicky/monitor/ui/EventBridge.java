@@ -4,6 +4,7 @@ import com.nicky.monitor.core.Monitor;
 import com.nicky.monitor.ui.components.*;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -40,18 +41,22 @@ public class EventBridge {
     }
 
     private void nifSubmitButtonClickEvent(){
-        nifSubmitButton.getButton().addClickListener(event -> monitor.start(
-                nifComboBox.getComboBox().getValue().getId(),
-                proxyTextField.getTextField().getValue(),
-                String.valueOf(portNumberField.getNumberField().getValue().intValue())));
+        nifSubmitButton.getButton().addClickListener(event -> {
+            String proxy = proxyTextField.getTextField().getValue();
+            Double port = portNumberField.getNumberField().getValue();
+            String portString;
+            proxy = (StringUtils.isEmpty(proxy)) ? "" : proxy;
+            portString = port == null ? "" : String.valueOf(port.intValue());
+            monitor.start(nifComboBox.getComboBox().getValue().getId(), proxy, portString);
+        });
     }
 
     private void listBoxValueChangeEvent(){
         listBox.getListBox().addValueChangeListener(event -> {
             if (packetTextGrid.getPacketText().size() == 0){
-                packetTextGrid.getPacketText().add(event.getValue());
+                packetTextGrid.getPacketText().add(event.getValue().toString());
             } else {
-                packetTextGrid.getPacketText().set(0, event.getValue());
+                packetTextGrid.getPacketText().set(0, event.getValue().toString());
             }
             packetTextGrid.getGrid().getDataProvider().refreshAll();
         });
@@ -61,7 +66,7 @@ public class EventBridge {
         monitor.addPacketListener(packet -> listBox.getListBox()
                 .getUI()
                 .ifPresent(ui -> ui.access(() -> {
-                    listBox.getPackets().add(packet.toString());
+                    listBox.getPackets().add(packet);
                     listBox.getListBox().getDataProvider().refreshAll();
                     ui.push();
                 })));
