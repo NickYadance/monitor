@@ -2,7 +2,9 @@ package com.nicky.monitor.ui;
 
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.material.Material;
@@ -12,8 +14,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import javax.annotation.PostConstruct;
 
 @Route("main")
+@Push
 @Theme(value = Material.class)
-@org.springframework.stereotype.Component
+@SpringComponent
 @UIScope
 public class MainUI extends VerticalLayout {
     @Autowired
@@ -39,6 +42,13 @@ public class MainUI extends VerticalLayout {
     @Autowired
     @Qualifier("proxyTextField")
     private UiComponent proxyTextField;
+
+    /**
+     * We need autowire EventBridge here cause it's UiScope
+     * Otherwise it won't initialize
+     */
+    @Autowired
+    private EventBridge eventBridge;
 
     @PostConstruct
     public void init(){

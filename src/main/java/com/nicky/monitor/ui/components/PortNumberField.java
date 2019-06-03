@@ -3,12 +3,13 @@ package com.nicky.monitor.ui.components;
 import com.nicky.monitor.ui.UiComponent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.Getter;
 
 import javax.annotation.PostConstruct;
 
-@org.springframework.stereotype.Component
+@SpringComponent
 @UIScope
 public class PortNumberField implements UiComponent {
     @Getter

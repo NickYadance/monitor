@@ -1,13 +1,11 @@
 package com.nicky.monitor.core;
 
 import com.nicky.monitor.config.MonitorConfig;
-import com.vaadin.flow.spring.annotation.UIScope;
-import lombok.Getter;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.pcap4j.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.CompletableFuture;
@@ -16,22 +14,21 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Slf4j
-@Component
-@UIScope
+@SpringComponent
 public class MonitorCore {
     @Autowired
     private MonitorConfig config;
 
-    @Getter
-    private CircularFifoQueue<String> packets;
+    @Setter
+    private PacketListener packetListener;
 
     private PcapHandle handle;
-    private ExecutorService pool = Executors.newSingleThreadExecutor();
+    private ExecutorService pool;
     private Future future;
 
     @PostConstruct
     public void init(){
-        packets = new CircularFifoQueue<>(config.getListSize());
+        pool = Executors.newSingleThreadExecutor();
     }
 
     public void start(){
@@ -43,7 +40,6 @@ public class MonitorCore {
             handle.close();
         }
 
-        PacketListener listener = packetListener();
         String filter = config.getFilter();
         PcapNetworkInterface nif = config.getNif();
         try {
@@ -53,7 +49,7 @@ public class MonitorCore {
             handle.setFilter(filter, BpfProgram.BpfCompileMode.OPTIMIZE);
             future = CompletableFuture.runAsync(() -> {
                 try {
-                    handle.loop(config.getMaxPacket(), listener);
+                    handle.loop(config.getMaxPacket(), packetListener);
                 } catch (PcapNativeException | InterruptedException | NotOpenException e) {
                     log.error("error while listening", e);
                 }
@@ -61,9 +57,5 @@ public class MonitorCore {
         } catch (PcapNativeException | NotOpenException e) {
             log.error("error while listening", e);
         }
-    }
-
-    private PacketListener packetListener(){
-        return packet -> packets.add(packet.toString());
     }
 }

@@ -1,20 +1,19 @@
 package com.nicky.monitor.core;
 
 import com.nicky.monitor.config.MonitorConfig;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
+import org.pcap4j.core.PacketListener;
 import org.pcap4j.core.PcapNetworkInterface;
 import org.pcap4j.core.Pcaps;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Component
+@SpringComponent
 public class Monitor {
     @Autowired
     private MonitorCore core;
@@ -23,19 +22,20 @@ public class Monitor {
     private MonitorConfig config;
 
     @Getter
-    private CircularFifoQueue<String> packets;
-
-    @Getter
-    private List<PcapNetworkInterface> nifs = new ArrayList<>();
+    private List<PcapNetworkInterface> nifs;
 
     @PostConstruct
     public void init(){
         try {
             this.nifs = Pcaps.findAllDevs();
-            this.packets = core.getPackets();
+            core.setPacketListener((event) -> {});
         } catch (Exception e){
             log.error("list devices error", e);
         }
+    }
+
+    public void addPacketListener(PacketListener packetListener){
+        core.setPacketListener(packetListener);
     }
 
     public void start(int nifId, String targetProxy, String targetPort){

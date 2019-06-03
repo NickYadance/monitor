@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 public class MonitorConfig {
     private static final String META_PORT = "port";
 
-    private int listSize = 500;
     private int snapshotLength = 65536;
     private int readTimeout = 50;
     private int maxPacket = -1;
