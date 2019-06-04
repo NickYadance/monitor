@@ -1,7 +1,6 @@
 package com.nicky.monitor.ui.components;
 
 import com.nicky.monitor.ui.UiComponent;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -19,10 +18,5 @@ public class ProxyTextField implements UiComponent {
     @PostConstruct
     public void init() {
         textField = new TextField("Proxy");
-    }
-
-    @Override
-    public Component get() {
-        return this.textField;
     }
 }

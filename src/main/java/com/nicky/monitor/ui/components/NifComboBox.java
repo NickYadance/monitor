@@ -3,7 +3,6 @@ package com.nicky.monitor.ui.components;
 import com.nicky.monitor.core.Monitor;
 import com.nicky.monitor.model.NifComboBoxModel;
 import com.nicky.monitor.ui.UiComponent;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -45,11 +44,6 @@ public class NifComboBox implements UiComponent {
         comboBox.setItems(this.nifComboBoxModels);
         comboBox.setRenderer(new ComponentRenderer<>(nifComboBoxModel -> new Html(nifComboBoxModel.toString())));
         comboBox.setItemLabelGenerator(NifComboBoxModel::toLabelString);
-    }
-
-    @Override
-    public Component get() {
-        return comboBox;
     }
 
     private NifComboBoxModel nifToDomain(PcapNetworkInterface networkInterface){

@@ -27,7 +27,10 @@ import java.io.Serializable;
 @Data
 public class PacketInfo implements Serializable {
 
+    private String localDateTime = null;
+
     private Packet packet = null;
+    private String packetLength = null;
     private String packetHex = null;
     private String packetRawData = null;
     private String packetPayLoad = null;
@@ -47,6 +50,8 @@ public class PacketInfo implements Serializable {
     private String l4RawData = null;
     private String l4SrcPort = null;
     private String l4DestPort = null;
+
+    private String unknownRawData = null;
 
     private boolean vlanPacket = false;
     private long timeStamp;

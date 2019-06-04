@@ -1,5 +1,6 @@
 package com.nicky.monitor.ui;
 
+import com.nicky.monitor.ui.components.*;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -10,7 +11,6 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.material.Material;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 
@@ -21,28 +21,19 @@ import javax.annotation.PostConstruct;
 @UIScope
 public class MainUI extends VerticalLayout {
     @Autowired
-    @Qualifier("nifComboBox")
-    private UiComponent nifComboBox;
+    private NifComboBox nifComboBox;
 
     @Autowired
-    @Qualifier("nifSubmitButton")
-    private UiComponent nifSubmitButton;
+    private NifSubmitButton nifSubmitButton;
 
     @Autowired
-    @Qualifier("packetsListBox")
-    private UiComponent packetsListBox;
+    private PacketsGrid packetsGrid;
 
     @Autowired
-    @Qualifier("packetTextGrid")
-    private UiComponent packetTextArea;
+    private PortNumberField portNumberField;
 
     @Autowired
-    @Qualifier("portNumberField")
-    private UiComponent portNumberField;
-
-    @Autowired
-    @Qualifier("proxyTextField")
-    private UiComponent proxyTextField;
+    private ProxyTextField proxyTextField;
 
     /**
      * We need autowire EventBridge here cause it's UiScope
@@ -52,32 +43,25 @@ public class MainUI extends VerticalLayout {
     private EventBridge eventBridge;
 
     private HorizontalLayout nifFormHLayout;
-    private HorizontalLayout packetInfoHLayout;
 
     @PostConstruct
     public void init(){
-        this.setWidth("800px");
-
         nifFormHLayout = new HorizontalLayout();
         nifFormHLayout.setWidthFull();
         nifFormHLayout.add(
-                portNumberField.get(),
-                proxyTextField.get()
+                portNumberField.getNumberField(),
+                proxyTextField.getTextField()
         );
 
-        packetInfoHLayout = new HorizontalLayout();
-        packetInfoHLayout.setWidthFull();
-        packetInfoHLayout.add(
-                packetsListBox.get(),
-                packetTextArea.get()
-        );
+        packetsGrid.getGrid().setWidthFull();
+        packetsGrid.getGrid().setPageSize(10);
 
         this.add(
                 new H1("Bandwidth Monitor"),
-                nifComboBox.get(),
+                nifComboBox.getComboBox(),
                 nifFormHLayout,
-                nifSubmitButton.get(),
-                packetInfoHLayout
+                nifSubmitButton.getButton(),
+                packetsGrid.getGrid()
         );
     }
 }

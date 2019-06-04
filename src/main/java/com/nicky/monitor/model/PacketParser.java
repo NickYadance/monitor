@@ -23,19 +23,13 @@ package com.nicky.monitor.model;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.io.FileUtils;
-import org.pcap4j.core.NotOpenException;
-import org.pcap4j.core.PcapHandle;
-import org.pcap4j.core.PcapNativeException;
-import org.pcap4j.core.Pcaps;
 import org.pcap4j.packet.*;
+import org.pcap4j.util.ByteArrays;
 
 import javax.xml.bind.DatatypeConverter;
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.concurrent.TimeoutException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Parse the packet
@@ -90,46 +84,11 @@ public class PacketParser implements Serializable {
 
     /**
      *
-     * @param fileName
-     * @param packetInfo
-     */
-    public void parseFile(String fileName, PacketInfo packetInfo){
-        Packet packet;
-        try {
-            this.packetInfo = packetInfo;
-            total_octetes = 0;
-            PcapHandle handle = Pcaps.openOffline(fileName);
-            packet = handle.getNextPacketEx();
-            packetInfo.setPacket(packet);
-            extractPacketInfo(packet);
-            handle.close();
-        } catch (PcapNativeException | EOFException | TimeoutException | NotOpenException ex) {
-            packet = null;
-            log.warn("Failed to extract packet info from first try");
-        }
-
-        if (packet == null) {
-            try {
-                log.info("Attempting alternate method to read Pcap file");
-                byte[] pkt = FileUtils.readFileToByteArray(new File(fileName));
-                packet = EthernetPacket.newPacket(pkt, 0, pkt.length);
-                extractPacketInfo(packet);
-            } catch (IOException | IllegalRawDataException ex) {
-                log.error("Failed to read Pcap file", ex);
-            }
-
-        }
-    }
-
-    /**
-     *
      * @param packet
-     * @param packetInfo
      */
-    public void parsePacket(Packet packet, PacketInfo packetInfo) {
+    public static PacketInfo parsePacket(Packet packet) {
         total_octetes = 0;
-        this.packetInfo = packetInfo;
-        extractPacketInfo(packet);
+        return extractPacketInfo(packet);
     }
 
     /**
@@ -138,9 +97,12 @@ public class PacketParser implements Serializable {
      * @param packet
      * @return
      */
-    private PacketInfo extractPacketInfo(Packet packet) {
-
+    private static PacketInfo extractPacketInfo(Packet packet) {
+        PacketInfo packetInfo = new PacketInfo();
+        packetInfo.setLocalDateTime(DateTimeFormatter.ofPattern("MM-dd HH:mm:ss").format(LocalDateTime.now()));
         if (packet != null) {
+            packetInfo.setPacket(packet);
+            packetInfo.setPacketLength(packet.length() + "b");
             packetInfo.setPacketHex(formatHex(DatatypeConverter.printHexBinary(packet.getRawData())));
             packetInfo.setPacketRawData(formatPayLoad(new String(packet.getRawData())));
         }
@@ -152,9 +114,11 @@ public class PacketParser implements Serializable {
         // If the packet has Ethernet
         if (packet.get(EthernetPacket.class) != null) {
             packetInfo.setEthernetHex(getHeaderOffset(packet.get(EthernetPacket.class).getHeader().toHexString().toUpperCase()));
-            packetInfo.setEthernetRawData(new String());
             packetInfo.setDestMac(packet.get(EthernetPacket.class).getHeader().getDstAddr().toString());
             packetInfo.setSrcMac(packet.get(EthernetPacket.class).getHeader().getSrcAddr().toString());
+            if (packet.get(EthernetPacket.class).getPad().length > 0){
+                packetInfo.setEthernetRawData(ByteArrays.toHexString(packet.get(EthernetPacket.class).getPad(), " "));
+            }
         }
 
         // if the packet has IPV4
@@ -191,6 +155,11 @@ public class PacketParser implements Serializable {
                 packetInfo.setPacketPayLoad(null);
             }
         }
+
+        // if packet has Unknown packet
+        if (packet.get(UnknownPacket.class) != null && packet.get(UnknownPacket.class).length() > 0){
+            packetInfo.setUnknownRawData(ByteArrays.toHexString(packet.get(UnknownPacket.class).getRawData(), " "));
+        }
         return packetInfo;
     }
 
@@ -200,7 +169,7 @@ public class PacketParser implements Serializable {
      * @param hexString
      * @return
      */
-    private String spaceHex(String hexString) {
+    private static String spaceHex(String hexString) {
         char[] hexChar = hexString.toCharArray();
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < hexChar.length; i++) {
@@ -218,7 +187,7 @@ public class PacketParser implements Serializable {
      * @param hex
      * @return
      */
-    private String formatHex(String hex) {
+    private static String formatHex(String hex) {
         int block = 0, line = 0, small = 0, octets = 0;
         String[] chare = hex.split("(?!^)");
         String dim;
@@ -252,7 +221,7 @@ public class PacketParser implements Serializable {
      * @param header
      * @return
      */
-    private String getHeaderOffset(String header) {
+    private static String getHeaderOffset(String header) {
         int offset = total_octetes;
         String[] headerOctets = header.split(" ");
         total_octetes += headerOctets.length;

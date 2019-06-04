@@ -1,7 +1,6 @@
 package com.nicky.monitor.ui.components;
 
 import com.nicky.monitor.ui.UiComponent;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -21,10 +20,5 @@ public class NifSubmitButton implements UiComponent {
     @PostConstruct
     public void init() {
         button = new Button("Start listening", new Icon(VaadinIcon.ARROW_RIGHT));
-    }
-
-    @Override
-    public Component get() {
-        return button;
     }
 }
