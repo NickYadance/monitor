@@ -1,6 +1,7 @@
 package com.nicky.monitor.core;
 
 import com.nicky.monitor.config.MonitorConfig;
+import com.nicky.monitor.ui.listener.StatusListener;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,8 @@ public class Monitor {
     public void init(){
         try {
             this.nifs = Pcaps.findAllDevs();
-            core.setPacketListener((event) -> {});
+            core.setPacketListener(event -> {});
+            core.setStatusListener(status -> {});
         } catch (Exception e){
             log.error("list devices error", e);
         }
@@ -36,6 +38,10 @@ public class Monitor {
 
     public void addPacketListener(PacketListener packetListener){
         core.setPacketListener(packetListener);
+    }
+
+    public void addStatusListener(StatusListener statusListener){
+        core.setStatusListener(statusListener);
     }
 
     public void start(int nifId, String targetProxy, String targetPort){
@@ -55,8 +61,16 @@ public class Monitor {
             needToRestart = true;
         }
 
+        if (!core.isOpen()){
+            needToRestart = true;
+        }
+
         if (needToRestart){
             core.start();
         }
+    }
+
+    public void shutdown(){
+        core.shutdown();
     }
 }

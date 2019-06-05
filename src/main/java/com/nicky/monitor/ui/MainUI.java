@@ -27,6 +27,9 @@ public class MainUI extends VerticalLayout {
     private NifSubmitButton nifSubmitButton;
 
     @Autowired
+    private NifShutdownButton nifShutdownButton;
+
+    @Autowired
     private PacketsGrid packetsGrid;
 
     @Autowired
@@ -46,6 +49,9 @@ public class MainUI extends VerticalLayout {
 
     @PostConstruct
     public void init(){
+        nifComboBox.getComboBox().setWidth("450px");
+        nifComboBox.getComboBox().setMinWidth("450px");
+
         nifFormHLayout = new HorizontalLayout();
         nifFormHLayout.setWidthFull();
         nifFormHLayout.add(
@@ -61,6 +67,7 @@ public class MainUI extends VerticalLayout {
                 nifComboBox.getComboBox(),
                 nifFormHLayout,
                 nifSubmitButton.getButton(),
+                nifShutdownButton.getButton(),
                 packetsGrid.getGrid()
         );
     }

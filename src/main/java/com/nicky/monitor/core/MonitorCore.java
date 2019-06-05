@@ -1,7 +1,9 @@
 package com.nicky.monitor.core;
 
 import com.nicky.monitor.config.MonitorConfig;
+import com.nicky.monitor.ui.listener.StatusListener;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.pcap4j.core.*;
@@ -19,8 +21,11 @@ public class MonitorCore {
     @Autowired
     private MonitorConfig config;
 
-    @Setter
+    @Setter(AccessLevel.PROTECTED)
     private PacketListener packetListener;
+
+    @Setter(AccessLevel.PROTECTED)
+    private StatusListener statusListener;
 
     private PcapHandle handle;
     private ExecutorService pool;
@@ -31,15 +36,7 @@ public class MonitorCore {
         pool = Executors.newSingleThreadExecutor();
     }
 
-    public void start(){
-        if (future != null && !future.isCancelled()){
-            future.cancel(true);
-        }
-
-        if (handle != null && handle.isOpen()){
-            handle.close();
-        }
-
+    void start(){
         String filter = config.getFilter();
         PcapNetworkInterface nif = config.getNif();
         try {
@@ -52,10 +49,42 @@ public class MonitorCore {
                     handle.loop(config.getMaxPacket(), packetListener);
                 } catch (PcapNativeException | InterruptedException | NotOpenException e) {
                     log.error("error while listening", e);
+                } finally {
+                    synchronized (this){
+                        if (handle != null && handle.isOpen()){
+                            handle.close();
+                        }
+                    }
                 }
             }, pool);
+            statusListener.applyStatus(true);
         } catch (PcapNativeException | NotOpenException e) {
             log.error("error while listening", e);
+            statusListener.applyStatus(false);
         }
+    }
+
+    void shutdown(){
+        if (handle != null && handle.isOpen()){
+            try {
+                handle.breakLoop();
+            } catch (Exception e){
+                log.error("cannot open handle", e);
+            }
+        }
+
+        // Todo
+        if (packetListener != null){
+            packetListener = (packet) -> {};
+        }
+
+        if (future != null && !future.isCancelled()){
+            future.cancel(true);
+        }
+        statusListener.applyStatus(false);
+    }
+
+    boolean isOpen(){
+        return handle != null && handle.isOpen() && !future.isDone();
     }
 }
