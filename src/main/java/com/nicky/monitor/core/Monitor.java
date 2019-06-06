@@ -46,7 +46,7 @@ public class Monitor {
 
     public void start(int nifId, String targetProxy, String targetPort){
         boolean needToRestart = false;
-        if (nifs.get(nifId) != config.getNif()){
+        if (nifs.get(nifId) != null && !nifs.get(nifId).equals(config.getNif())){
             config.setNif(nifs.get(nifId));
             needToRestart = true;
         }

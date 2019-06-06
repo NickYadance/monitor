@@ -38,7 +38,7 @@ public class NifComboBox implements UiComponent {
             nifComboBoxModels.get(i).setId(i);
         }
         comboBox = new ComboBox<>();
-        comboBox.setLabel("Choose your network interface");
+        comboBox.setLabel("Choose the network interface");
         comboBox.setItems(this.nifComboBoxModels);
         comboBox.setRenderer(new ComponentRenderer<>(nifComboBoxModel -> new Html(nifComboBoxModel.toString())));
         comboBox.setItemLabelGenerator(NifComboBoxModel::toLabelString);

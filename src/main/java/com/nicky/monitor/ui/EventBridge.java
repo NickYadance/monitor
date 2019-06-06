@@ -1,11 +1,8 @@
 package com.nicky.monitor.ui;
 
 import com.nicky.monitor.core.Monitor;
-import com.nicky.monitor.model.NifComboBoxModel;
 import com.nicky.monitor.model.PacketParser;
 import com.nicky.monitor.ui.components.*;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -27,10 +24,10 @@ public class EventBridge {
     private NifComboBox nifComboBox;
 
     @Autowired
-    private ProxyTextField proxyTextField;
+    private ProxyComboBox proxyComboBox;
 
     @Autowired
-    private PortNumberField portNumberField;
+    private PortComboBox portComboBox;
 
     @Autowired
     private NifSubmitButton nifSubmitButton;
@@ -44,22 +41,20 @@ public class EventBridge {
         nifShutdownButtonClickEvent();
         monitorPacketEvent();
         monitorStatusEvent();
+        portComboBoxCustomValueEvent();
     }
 
     private void nifSubmitButtonClickEvent(){
         nifSubmitButton.getButton().addClickListener(event -> {
-            NifComboBoxModel nifModel = nifComboBox.getComboBox().getValue();
-            if (nifModel == null){
-                Notification.show("Choose the device to listen", 2500, Notification.Position.TOP_CENTER);
+            if (nifComboBox.getComboBox().getValue() == null
+                    || StringUtils.isEmpty(proxyComboBox.getComboBox().getValue())
+                    || StringUtils.isEmpty(portComboBox.getComboBox().getValue())){
+                Notification.show("Need device config", 2500, Notification.Position.TOP_CENTER);
                 return;
             }
-            String proxy = proxyTextField.getTextField().getValue();
-            Double port = portNumberField.getNumberField().getValue();
-            String portString;
-            proxy = StringUtils.isEmpty(proxy) ? "" : proxy;
-            portString = port == null ? "" : String.valueOf(port.intValue());
-//            monitor.start(nifModel.getId(), proxy, portString);
-            monitor.start(7, "tcp", "1999");
+            monitor.start(nifComboBox.getComboBox().getValue().getId(),
+                    proxyComboBox.getComboBox().getValue(),
+                    portComboBox.getComboBox().getValue().trim());
         });
     }
 
@@ -71,26 +66,30 @@ public class EventBridge {
 
     private void monitorPacketEvent(){
         monitor.addPacketListener(packet -> packetsGrid.getGrid()
-        .getUI()
-        .ifPresent(ui -> ui.access(() -> {
-            packetsGrid.getPackets().offer(PacketParser.parsePacket(packet));
-            packetsGrid.getGrid().getDataProvider().refreshAll();
-        })));
+                .getUI()
+                .ifPresent(ui -> ui.access(() -> {
+                    packetsGrid.getPackets().offer(PacketParser.parsePacket(packet));
+                    packetsGrid.getGrid().getDataProvider().refreshAll();
+                })));
     }
 
     private void monitorStatusEvent(){
         monitor.addStatusListener(status -> {
             if (status){
                 nifSubmitButton.getButton().setVisible(false);
-                nifShutdownButton.getButton().setIcon(new Icon(VaadinIcon.SUN_RISE));
-                nifShutdownButton.getButton().setText("Running");
                 nifShutdownButton.getButton().setVisible(true);
+                packetsGrid.getPackets().clear();
+                packetsGrid.getGrid()
+                        .getUI()
+                        .ifPresent(ui -> ui.access(() -> packetsGrid.getGrid().getDataProvider().refreshAll()));
             } else {
                 nifSubmitButton.getButton().setVisible(true);
-                nifShutdownButton.getButton().setIcon(new Icon(VaadinIcon.SUN_DOWN));
-                nifShutdownButton.getButton().setText("Stopped");
                 nifShutdownButton.getButton().setVisible(false);
             }
         });
+    }
+
+    private void portComboBoxCustomValueEvent(){
+        portComboBox.getComboBox().addCustomValueSetListener(event -> portComboBox.getComboBox().setValue(event.getDetail()));
     }
 }

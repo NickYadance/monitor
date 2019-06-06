@@ -73,11 +73,6 @@ public class MonitorCore {
             }
         }
 
-        // Todo
-        if (packetListener != null){
-            packetListener = (packet) -> {};
-        }
-
         if (future != null && !future.isCancelled()){
             future.cancel(true);
         }
@@ -85,6 +80,6 @@ public class MonitorCore {
     }
 
     boolean isOpen(){
-        return handle != null && handle.isOpen() && !future.isDone();
+        return handle != null && handle.isOpen() && future != null && !future.isDone();
     }
 }
