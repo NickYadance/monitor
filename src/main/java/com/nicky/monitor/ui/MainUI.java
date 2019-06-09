@@ -46,6 +46,9 @@ public class MainUI extends VerticalLayout {
 
     @PostConstruct
     public void init(){
+        this.setWidth("800px");
+        this.setHeight("800px");
+
         nifComboBox.setWidth("450px");
         nifComboBox.setMinWidth("450px");
 
