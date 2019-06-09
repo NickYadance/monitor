@@ -1,6 +1,7 @@
 package com.nicky.monitor.ui;
 
 import com.nicky.monitor.ui.components.*;
+import com.nicky.monitor.ui.event.EventRegistCenter;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
@@ -38,11 +39,10 @@ public class MainUI extends VerticalLayout {
     private ProxyComboBox proxyComboBox;
 
     /**
-     * We need autowire EventBridge here cause it's UiScope
-     * Otherwise it won't initialize
+     * We need autowire here cause UiScope, otherwise event won't be registered
      */
     @Autowired
-    private EventBridge eventBridge;
+    private EventRegistCenter eventRegistCenter;
 
     @PostConstruct
     public void init(){

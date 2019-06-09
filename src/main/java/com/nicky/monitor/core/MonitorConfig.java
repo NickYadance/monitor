@@ -1,14 +1,16 @@
-package com.nicky.monitor.config;
+package com.nicky.monitor.core;
 
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.pcap4j.core.PcapNetworkInterface;
-import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
-@Component
+@SpringComponent
+@UIScope
 public class MonitorConfig {
     private static final String META_PORT = "port";
 

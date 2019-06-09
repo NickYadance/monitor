@@ -1,8 +1,8 @@
 package com.nicky.monitor.core;
 
-import com.nicky.monitor.config.MonitorConfig;
 import com.nicky.monitor.ui.listener.StatusListener;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.pcap4j.core.PacketListener;
@@ -15,6 +15,7 @@ import java.util.List;
 
 @Slf4j
 @SpringComponent
+@UIScope
 public class Monitor {
     @Autowired
     private MonitorCore core;
