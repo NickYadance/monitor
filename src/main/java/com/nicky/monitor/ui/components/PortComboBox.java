@@ -1,13 +1,11 @@
 package com.nicky.monitor.ui.components;
 
-import com.nicky.monitor.ui.UiComponent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -17,25 +15,25 @@ import java.util.TreeMap;
 
 @SpringComponent
 @UIScope
-public class PortComboBox implements UiComponent {
-    @Getter
-    private ComboBox<String> comboBox;
-
+public class PortComboBox extends ComboBox<String> {
+    @Autowired
+    public PortComboBox(){
+        super("Choose or edit the port");
+    }
+    
     @Autowired
     private SerializableFunction<String, Component> serializableFunction;
 
     private Map<String, String> portDescription = new TreeMap<>(Comparator.comparing(Integer::valueOf));
 
-    @Override
     @PostConstruct
     public void init() {
         initData();
-        comboBox = new ComboBox<>("Choose or edit the port");
-        comboBox.setItems(portDescription.keySet());
-        comboBox.setAllowCustomValue(true);
-        comboBox.setRenderer(new ComponentRenderer<>(item -> serializableFunction.apply(item + ":" + portDescription.getOrDefault(item, "Unknown"))));
-        comboBox.setPlaceholder("Default all port");
-        comboBox.setPattern("^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
+        setItems(portDescription.keySet());
+        setAllowCustomValue(true);
+        setRenderer(new ComponentRenderer<>(item -> serializableFunction.apply(item + ":" + portDescription.getOrDefault(item, "Unknown"))));
+        setPlaceholder("Default all port");
+        setPattern("^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
     }
 
     private void initData(){

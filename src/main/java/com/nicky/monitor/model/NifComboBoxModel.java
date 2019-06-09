@@ -8,8 +8,6 @@ import org.pcap4j.util.LinkLayerAddress;
 import java.io.Serializable;
 import java.util.List;
 
-import static com.nicky.monitor.constants.HtmlTag.HTML_BREAK;
-
 @Setter
 @Getter
 public class NifComboBoxModel implements Serializable {
@@ -35,24 +33,22 @@ public class NifComboBoxModel implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("<div><pre>");
         if (this.getId() != null && this.getName() != null) {
-            sb.append("NIF[").append(this.getId()).append("]: ").append(this.getName()).append(HTML_BREAK);
+            sb.append("NIF[").append(this.getId()).append("]: ").append(this.getName()).append(System.lineSeparator());
         }
         if (this.getDescription() != null) {
-            sb.append("      : description: [").append(this.getDescription()).append("]").append(HTML_BREAK);
+            sb.append("      : description: [").append(this.getDescription()).append("]").append(System.lineSeparator());
         }
         if (this.getLinkLayerAddress() != null) {
-            this.getLinkLayerAddress().forEach(layerAddress -> sb.append("      : Link layer address: [").append(layerAddress).append("]").append(HTML_BREAK));
+            this.getLinkLayerAddress().forEach(layerAddress -> sb.append("      : Link layer address: [").append(layerAddress).append("]").append(System.lineSeparator()));
         }
         if (this.getAddress() != null){
-            this.getAddress().forEach(pcapAddress -> sb.append("      : Net layer address: ").append(HTML_BREAK)
-                    .append("            : Address: ").append(pcapAddress.getAddress()).append(HTML_BREAK)
-                    .append("            : Netmask: ").append(pcapAddress.getNetmask()).append(HTML_BREAK)
-                    .append("            : BroadcastAddress: ").append(pcapAddress.getBroadcastAddress()).append(HTML_BREAK)
-                    .append("            : DestinationAddress: ").append(pcapAddress.getDestinationAddress()).append(HTML_BREAK));
+            this.getAddress().forEach(pcapAddress -> sb.append("      : Net layer address: ").append(System.lineSeparator())
+                    .append("            : Address: ").append(pcapAddress.getAddress()).append(System.lineSeparator())
+                    .append("            : Netmask: ").append(pcapAddress.getNetmask()).append(System.lineSeparator())
+                    .append("            : BroadcastAddress: ").append(pcapAddress.getBroadcastAddress()).append(System.lineSeparator())
+                    .append("            : DestinationAddress: ").append(pcapAddress.getDestinationAddress()).append(System.lineSeparator()));
         }
-        sb.append("</pre></div>");
         return sb.toString();
     }
 }

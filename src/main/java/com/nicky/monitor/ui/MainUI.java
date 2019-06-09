@@ -46,26 +46,26 @@ public class MainUI extends VerticalLayout {
 
     @PostConstruct
     public void init(){
-        nifComboBox.getComboBox().setWidth("450px");
-        nifComboBox.getComboBox().setMinWidth("450px");
+        nifComboBox.setWidth("450px");
+        nifComboBox.setMinWidth("450px");
 
-        proxyComboBox.getComboBox().setWidth("450px");
-        proxyComboBox.getComboBox().setMinWidth("450px");
+        proxyComboBox.setWidth("450px");
+        proxyComboBox.setMinWidth("450px");
 
-        portComboBox.getComboBox().setWidth("450px");
-        portComboBox.getComboBox().setMinWidth("450px");
+        portComboBox.setWidth("450px");
+        portComboBox.setMinWidth("450px");
 
-        packetsGrid.getGrid().setWidthFull();
-        packetsGrid.getGrid().setPageSize(10);
+        packetsGrid.setWidthFull();
+        packetsGrid.setPageSize(10);
 
         this.add(
                 new H1("Bandwidth Monitor"),
-                nifComboBox.getComboBox(),
-                proxyComboBox.getComboBox(),
-                portComboBox.getComboBox(),
-                nifSubmitButton.getButton(),
-                nifShutdownButton.getButton(),
-                packetsGrid.getGrid()
+                nifComboBox,
+                proxyComboBox,
+                portComboBox,
+                nifSubmitButton,
+                nifShutdownButton,
+                packetsGrid
         );
     }
 }

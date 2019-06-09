@@ -45,51 +45,51 @@ public class EventBridge {
     }
 
     private void nifSubmitButtonClickEvent(){
-        nifSubmitButton.getButton().addClickListener(event -> {
-            if (nifComboBox.getComboBox().getValue() == null
-                    || StringUtils.isEmpty(proxyComboBox.getComboBox().getValue())
-                    || StringUtils.isEmpty(portComboBox.getComboBox().getValue())){
+        nifSubmitButton.addClickListener(event -> {
+            if (nifComboBox.getValue() == null
+                    || StringUtils.isEmpty(proxyComboBox.getValue())
+                    || StringUtils.isEmpty(portComboBox.getValue())){
                 Notification.show("Need device config", 2500, Notification.Position.TOP_CENTER);
                 return;
             }
-            monitor.start(nifComboBox.getComboBox().getValue().getId(),
-                    proxyComboBox.getComboBox().getValue(),
-                    portComboBox.getComboBox().getValue().trim());
+            monitor.start(nifComboBox.getValue().getId(),
+                    proxyComboBox.getValue(),
+                    portComboBox.getValue().trim());
         });
     }
 
     private void nifShutdownButtonClickEvent(){
-        nifShutdownButton.getButton().addClickListener(event -> {
+        nifShutdownButton.addClickListener(event -> {
             monitor.shutdown();
         });
     }
 
     private void monitorPacketEvent(){
-        monitor.addPacketListener(packet -> packetsGrid.getGrid()
+        monitor.addPacketListener(packet -> packetsGrid
                 .getUI()
                 .ifPresent(ui -> ui.access(() -> {
                     packetsGrid.getPackets().offer(PacketParser.parsePacket(packet));
-                    packetsGrid.getGrid().getDataProvider().refreshAll();
+                    packetsGrid.getDataProvider().refreshAll();
                 })));
     }
 
     private void monitorStatusEvent(){
         monitor.addStatusListener(status -> {
             if (status){
-                nifSubmitButton.getButton().setVisible(false);
-                nifShutdownButton.getButton().setVisible(true);
+                nifSubmitButton.setVisible(false);
+                nifShutdownButton.setVisible(true);
                 packetsGrid.getPackets().clear();
-                packetsGrid.getGrid()
+                packetsGrid
                         .getUI()
-                        .ifPresent(ui -> ui.access(() -> packetsGrid.getGrid().getDataProvider().refreshAll()));
+                        .ifPresent(ui -> ui.access(() -> packetsGrid.getDataProvider().refreshAll()));
             } else {
-                nifSubmitButton.getButton().setVisible(true);
-                nifShutdownButton.getButton().setVisible(false);
+                nifSubmitButton.setVisible(true);
+                nifShutdownButton.setVisible(false);
             }
         });
     }
 
     private void portComboBoxCustomValueEvent(){
-        portComboBox.getComboBox().addCustomValueSetListener(event -> portComboBox.getComboBox().setValue(event.getDetail()));
+        portComboBox.addCustomValueSetListener(event -> portComboBox.setValue(event.getDetail()));
     }
 }
