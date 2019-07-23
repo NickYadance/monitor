@@ -1,0 +1,30 @@
+{
+  "name": "monitor",
+  "version": "1.0.0",
+  "description": "bandwith monitor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron index.js",
+    "dist": "electron-builder"
+
+  },
+  "author": "nicky",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "minimal-request-promise": "^1.5.0",
+    "tree-kill": "^1.2.1"
+  },
+  "devDependencies": {
+    "electron-builder": "^21.1.1",
+    "electron": "^5.0.7"
+  },
+  "build": {
+    "appId": "monitor",
+    "copyright": "Copyright © 2019 Nicky.coorp",
+    "mac": {
+      "category": "bandwith monitor"
+    }
+  }
+}
