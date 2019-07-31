@@ -1,7 +1,7 @@
 const {app, BrowserWindow} = require('electron');
 
 let win;
-let appUrl = 'http://localhost:2019/main';
+let appUrl = 'http://127.0.0.1:2019/main';
 
 function createWindow() {
     let platform = process.platform;
@@ -17,8 +17,16 @@ function createWindow() {
             name: 'Electron',
         };
 
+        const path = require('path');
+        const isDev = require('electron-is-dev');
+        let jarFile;
+        if (isDev){
+            jarFile = path.join(path.dirname(__dirname), 'electron', 'extraResources', 'monitor-0.0.2-SNAPSHOT.jar');
+        } else {
+            jarFile = path.join(path.dirname(__dirname), 'extraResources', 'monitor-0.0.2-SNAPSHOT.jar');
+        }
         require('sudo-prompt')
-            .exec("java -jar ./lib/monitor-0.0.2-SNAPSHOT.jar", options, function (err, stdout, stderr) {
+            .exec("java -jar " + jarFile, options, function (err, stdout, stderr) {
                 if (err){
                     console.error("error while invoking server process", err)
                 }
